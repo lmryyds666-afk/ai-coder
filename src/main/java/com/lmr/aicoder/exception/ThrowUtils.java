@@ -21,7 +21,10 @@ public class ThrowUtils {
      * @param errorCode 错误码
      */
     public static void throwIf(boolean condition, ErrorCode errorCode) {
-        throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        if(condition){
+            throw new BusinessException(errorCode);
+        }
+
     }
 
     /**
