@@ -6,11 +6,13 @@ import cn.hutool.core.util.StrUtil;
 import com.lmr.aicoder.ai.model.HtmlCodeResult;
 import com.lmr.aicoder.ai.model.MultiFileCodeResult;
 import com.lmr.aicoder.model.enums.CodeGenTypeEnum;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+@Deprecated
 public class CodeFileSaver {
     //文件保存根目录
     private static final String FILE_SAVE_ROOT_DIR = System.getProperty("user.dir")+"/tmp/code_output";

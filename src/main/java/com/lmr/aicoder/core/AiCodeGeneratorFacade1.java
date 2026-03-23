@@ -8,14 +8,14 @@ import com.lmr.aicoder.exception.ErrorCode;
 import com.lmr.aicoder.model.enums.CodeGenTypeEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.kafka.SslBundleSslEngineFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.io.File;
 @Slf4j
 @Service
-public class AiCodeGeneratorFacade {
+@Deprecated
+public class AiCodeGeneratorFacade1 {
 
     @Resource
     private AiCodeGeneratorService aiCodeGeneratorService;
