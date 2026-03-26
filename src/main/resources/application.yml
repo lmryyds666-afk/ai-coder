@@ -5,6 +5,19 @@ spring:
   profiles:
     active: local
 
+  # redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: lmryyds666
+      ttl: 3600
+
+
+
+
+
+
 
   # mysql
   datasource:
