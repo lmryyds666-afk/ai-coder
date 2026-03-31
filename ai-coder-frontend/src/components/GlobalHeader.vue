@@ -12,13 +12,17 @@
       </a-col>
       <!-- 中间：导航菜单 -->
       <a-col flex="auto">
-        <a-menu v-model:selectedKeys="selectedKeys" mode="horizontal" :items="menuItems" @click="handleMenuClick" />
+        <a-menu
+          v-model:selectedKeys="selectedKeys"
+          mode="horizontal"
+          :items="menuItems"
+          @click="handleMenuClick"
+        />
       </a-col>
       <!-- 右侧：用户操作区域 -->
       <a-col>
         <div class="user-login-status">
           <div v-if="loginUserStore.loginUser.id">
-
             <a-dropdown>
               <a-space>
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
@@ -27,21 +31,16 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="doLogout">
+                    <LogoutOutlined />
                     退出登录
                   </a-menu-item>
                 </a-menu>
               </template>
-
-
             </a-dropdown>
-
-
-
           </div>
           <div v-else>
             <a-button type="primary" href="/user/login">登录</a-button>
           </div>
-
         </div>
       </a-col>
     </a-row>
@@ -54,12 +53,9 @@ import { useRouter } from 'vue-router'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useLoginUserStore } from '@/stores/loginUser.ts'
 import { userLogout } from '@/api/userController.ts'
-import { HomeOutlined } from '@ant-design/icons-vue';
+import { LogoutOutlined, HomeOutlined } from '@ant-design/icons-vue'
 
 const loginUserStore = useLoginUserStore()
-loginUserStore.fetchLoginUser()
-
-
 const router = useRouter()
 // 当前选中菜单
 const selectedKeys = ref<string[]>(['/'])
@@ -80,6 +76,11 @@ const originItems = [
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',
+  },
+  {
+    key: '/admin/appManage',
+    label: '应用管理',
+    title: '应用管理',
   },
   {
     key: 'others',
@@ -115,11 +116,7 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
   }
 }
 
-
-
-
-
-// 用户注销
+// 退出登录
 const doLogout = async () => {
   const res = await userLogout()
   if (res.data.code === 0) {
@@ -132,7 +129,6 @@ const doLogout = async () => {
     message.error('退出登录失败，' + res.data.message)
   }
 }
-
 </script>
 
 <style scoped>
@@ -162,5 +158,3 @@ const doLogout = async () => {
   border-bottom: none !important;
 }
 </style>
-
-"D:/卓面/lmr/编程导航项目/lmr-ai-coder/图片/lmr01.jpg"

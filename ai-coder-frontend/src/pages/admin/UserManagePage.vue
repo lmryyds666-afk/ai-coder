@@ -14,67 +14,98 @@
     </a-form>
     <a-divider />
     <!-- 表格 -->
+    <a-table
+      :columns="columns"
+      :data-source="data"
+      :pagination="pagination"
+      @change="doTableChange"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'userAvatar'">
+          <a-image :src="record.userAvatar" :width="60" :height="60" preview
+                   style="object-fit: cover; border-radius: 4px" />
+        </template>
+        <template v-else-if="column.dataIndex === 'userRole'">
+          <div v-if="record.userRole === 'admin'">
+            <a-tag color="green">管理员</a-tag>
+          </div>
+          <div v-else>
+            <a-tag color="blue">普通用户</a-tag>
+          </div>
+        </template>
+        <template v-else-if="column.dataIndex === 'createTime'">
+          {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+        </template>
+        <template v-else-if="column.key === 'action'">
+          <a-button danger @click="doDelete(record.id)">删除</a-button>
+        </template>
+      </template>
+    </a-table>
   </div>
-
-  <a-table :dataSource="data" :columns="columns" :pagination="pagination" @change="doTableChange">
-    <!-- 表格单元格插槽 -->
-    <template #bodyCell="{ column, record }">
-      <!-- 头像：统一大小 + 不变形 -->
-      <template v-if="column.dataIndex === 'userAvatar'">
-        <a-image :src="record.userAvatar" :width="60" :height="60" preview
-          style="object-fit: cover; border-radius: 4px" />
-      </template>
-
-      <!-- 用户角色 -->
-      <template v-else-if="column.dataIndex === 'userRole'">
-        <a-tag v-if="record.userRole === 'admin'" color="green">管理员</a-tag>
-        <a-tag v-else color="blue">普通用户</a-tag>
-      </template>
-
-      <!-- 创建时间 -->
-      <template v-else-if="column.dataIndex === 'createTime'">
-        {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
-      </template>
-
-      <!-- 操作 -->
-      <template v-else-if="column.key === 'action'">
-        <a-button danger @click="doDelete(record.id)">删除</a-button>
-      </template>
-    </template>
-  </a-table>
 </template>
+<script lang="ts" setup>
+import { computed, onMounted, reactive, ref } from 'vue'
+import { deleteUser, listUserVoByPage } from '@/api/userController.ts'
+import { message } from 'ant-design-vue'
+import dayjs from 'dayjs'
 
-<script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
-import { message } from 'ant-design-vue';
-import { deleteUser, listUserVoByPage } from '@/api/userController';
-import dayjs from 'dayjs';
+const columns = [
+  {
+    title: 'id',
+    dataIndex: 'id',
+  },
+  {
+    title: '账号',
+    dataIndex: 'userAccount',
+  },
+  {
+    title: '用户名',
+    dataIndex: 'userName',
+  },
+  {
+    title: '头像',
+    dataIndex: 'userAvatar',
+  },
+  {
+    title: '简介',
+    dataIndex: 'userProfile',
+  },
+  {
+    title: '用户角色',
+    dataIndex: 'userRole',
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createTime',
+  },
+  {
+    title: '操作',
+    key: 'action',
+  },
+]
 
-// 数据
-const data = ref<API.UserVO[]>([]);
-const total = ref(0);
+// 展示的数据
+const data = ref<API.UserVO[]>([])
+const total = ref(0)
 
 // 搜索条件
 const searchParams = reactive<API.UserQueryRequest>({
   pageNum: 1,
   pageSize: 10,
-});
+})
 
 // 获取数据
 const fetchData = async () => {
-  try {
-    const res = await listUserVoByPage({ ...searchParams });
-    if (res.data.code === 0) {
-      data.value = res.data.data.records ?? [];
-      total.value = res.data.data.totalRow ?? 0;
-    } else {
-      message.error('获取数据失败：' + res.data.message);
-    }
-  } catch (error) {
-    message.error('请求异常');
-    console.error(error);
+  const res = await listUserVoByPage({
+    ...searchParams,
+  })
+  if (res.data.data) {
+    data.value = res.data.data.records ?? []
+    total.value = res.data.data.totalRow ?? 0
+  } else {
+    message.error('获取数据失败，' + res.data.message)
   }
-};
+}
 
 // 分页参数
 const pagination = computed(() => {
@@ -86,14 +117,15 @@ const pagination = computed(() => {
     showTotal: (total: number) => `共 ${total} 条`,
   }
 })
-// 表格变化处理
-const doTableChange = (page: any) => {
+
+// 表格分页变化时的操作
+const doTableChange = (page: { current: number; pageSize: number }) => {
   searchParams.pageNum = page.current
   searchParams.pageSize = page.pageSize
   fetchData()
 }
 
-// 获取搜索数据
+// 搜索数据
 const doSearch = () => {
   // 重置页码
   searchParams.pageNum = 1
@@ -115,21 +147,16 @@ const doDelete = async (id: string) => {
   }
 }
 
-
-
+// 页面加载时请求一次
 onMounted(() => {
-  fetchData();
-});
-
-// 表格列
-const columns = [
-  { title: 'id', dataIndex: 'id' },
-  { title: '账号', dataIndex: 'userAccount' },
-  { title: '用户名', dataIndex: 'userName' },
-  { title: '头像', dataIndex: 'userAvatar' },
-  { title: '简介', dataIndex: 'userProfile' },
-  { title: '用户角色', dataIndex: 'userRole' },
-  { title: '创建时间', dataIndex: 'createTime' },
-  { title: '操作', key: 'action' },
-];
+  fetchData()
+})
 </script>
+
+<style scoped>
+#userManagePage {
+  padding: 24px;
+  background: white;
+  margin-top: 16px;
+}
+</style>
