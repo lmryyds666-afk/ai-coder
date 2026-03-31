@@ -2,6 +2,7 @@ package com.lmr.aicoder.ai;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.lmr.aicoder.service.ChatHistoryService;
 import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
@@ -9,8 +10,10 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.Duration;
 
@@ -26,6 +29,10 @@ public class AiCodeGeneratorServiceFactory {
 
     @Resource
     private RedisChatMemoryStore redisChatMemoryStore;
+
+    @Lazy
+    @Resource
+    private ChatHistoryService chatHistoryService;
     /**
      * AI服务实例缓存
      * 缓存策略：
@@ -41,6 +48,7 @@ public class AiCodeGeneratorServiceFactory {
                 log.debug("AI服务实例被移除，appId:{},原因:{}",key,cause.toString());
             })
             .build();
+
 
 
     /**
@@ -71,6 +79,8 @@ public class AiCodeGeneratorServiceFactory {
                 .chatMemoryStore(redisChatMemoryStore)
                 .maxMessages(20)
                 .build();
+        //从数据库加载历史对话到记忆中
+        chatHistoryService.loadChatHistoryToMemory(appId,chatMemory,20);
                 return AiServices.builder(AiCodeGeneratorService.class)
                         .chatModel(chatModel)
                         .streamingChatModel(streamingChatModel)
