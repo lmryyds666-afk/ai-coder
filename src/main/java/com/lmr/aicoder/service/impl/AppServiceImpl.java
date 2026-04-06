@@ -6,6 +6,7 @@ import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.lmr.aicoder.core.AiCodeGeneratorFacade;
+import com.lmr.aicoder.core.builder.VueProjectBuilder;
 import com.lmr.aicoder.core.handle.StreamHandlerExecutor;
 import com.lmr.aicoder.exception.BusinessException;
 import com.lmr.aicoder.exception.ErrorCode;
@@ -51,6 +52,8 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
     @Lazy
     private ChatHistoryService chatHistoryService;
 
+    @Resource
+    private VueProjectBuilder vueProjectBuilder;
 
     private final UserService userService;
     private final AiCodeGeneratorFacade aiCodeGeneratorFacade;
@@ -204,6 +207,19 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         if(! new File(sourceDirPath).exists() || !new File(sourceDirPath).isDirectory()){
            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"应用不存在，请先生成应用");
        }
+        //vue项目特殊处理，执行构建
+        CodeGenTypeEnum codeGenTypeEnum = CodeGenTypeEnum.getEnumByValue(codeGenType);
+        if(codeGenTypeEnum == CodeGenTypeEnum.VUE_PROJECT){
+            //vue项目构建
+            boolean buildSuccess = vueProjectBuilder.buildProject(sourceDirPath);
+            ThrowUtils.throwIf(!buildSuccess,ErrorCode.SYSTEM_ERROR,"构建失败");
+            //检查dist目录是否存在
+            File disDir = new File(sourceDirPath,"dist");
+            ThrowUtils.throwIf(!disDir.exists() || !disDir.isDirectory(),ErrorCode.SYSTEM_ERROR,"Vue项目构建完成但未生成dist目录");
+            //将dist目录赋值给source 作为部署源
+            sourceDirPath = disDir.getAbsolutePath();
+            log.info("Vue项目构建完成，dist目录: {}", disDir.getAbsolutePath());
+        }
         //复制文件到部署目录
         String deployDirPath = AppConstant.CODE_DEPLOY_ROOT_DIR+ File.separator+deployKey;
         try {

@@ -5,9 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lmr.aicoder.ai.model.message.*;
+import com.lmr.aicoder.core.builder.VueProjectBuilder;
+import com.lmr.aicoder.model.constant.AppConstant;
 import com.lmr.aicoder.model.entity.User;
 import com.lmr.aicoder.model.enums.ChatHistoryMessageTypeEnum;
 import com.lmr.aicoder.service.ChatHistoryService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -23,6 +26,8 @@ import java.util.Set;
 @Component
 public class JsonMessageStreamHandler {
 
+    @Resource
+    private VueProjectBuilder vueProjectBuilder;
     /**
      * 处理 TokenStream（VUE_PROJECT）
      * 解析 JSON 消息并重组为完整的响应格式
@@ -50,6 +55,9 @@ public class JsonMessageStreamHandler {
                     // 流式响应完成后，添加 AI 消息到对话历史
                     String aiResponse = chatHistoryStringBuilder.toString();
                     chatHistoryService.addChatMessage(appId, aiResponse, ChatHistoryMessageTypeEnum.AI.getValue(), loginUser.getId());
+                    //异步构建Vue项目
+                    String projectPath = AppConstant.CODE_OUTPUT_ROOT_DIR + "/vue_project_"+appId;
+                    vueProjectBuilder.buildProjectAsync(projectPath);
                 })
                 .doOnError(error -> {
                     // 如果AI回复失败，也要记录错误消息
