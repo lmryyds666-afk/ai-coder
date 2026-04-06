@@ -2,6 +2,7 @@ spring:
   application:
     name: lmr-ai-code-mother-backend
 
+
   profiles:
     active: local
 
