@@ -8,24 +8,26 @@ import com.lmr.aicoder.common.ResultUtils;
 import com.lmr.aicoder.exception.BusinessException;
 import com.lmr.aicoder.exception.ErrorCode;
 import com.lmr.aicoder.exception.ThrowUtils;
+import com.lmr.aicoder.manage.CosManager;
 import com.lmr.aicoder.model.constant.UserConstant;
 import com.lmr.aicoder.model.dto.user.*;
 import com.lmr.aicoder.model.vo.LoginUserVO;
 import com.lmr.aicoder.model.vo.UserVO;
 import com.mybatisflex.core.paginate.Page;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springdoc.core.annotations.RouterOperation;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.lmr.aicoder.model.entity.User;
 import com.lmr.aicoder.service.UserService;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,10 +37,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Resource
+    private CosManager cosManager;
 
     /**
      * 保存。
@@ -242,6 +247,104 @@ public class UserController {
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage);
     }
+
+    /**
+     * 头像上传
+     */
+    @PostMapping("/file/uploadFile")
+    public BaseResponse<String> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("key") String key,
+            HttpServletRequest request
+    ) {
+        // 1. 登录校验
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+
+        // 2. 判空
+        if (file == null || file.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件不能为空");
+        }
+
+        // 3. 转临时文件
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("temp", null);
+            file.transferTo(tempFile);
+
+            // 4. 上传到 COS
+            String url = cosManager.uploadFile(key, tempFile);
+            if (url == null) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "文件上传失败");
+            }
+
+            // 5. 更新数据库头像字段
+            User updateUser = new User();
+            updateUser.setId(loginUser.getId());
+            updateUser.setUserAvatar(url);
+            boolean updateResult = userService.updateById(updateUser);
+            if (!updateResult) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "头像保存失败");
+            }
+
+            return ResultUtils.success(url);
+        } catch (IOException e) {
+            log.error("文件上传异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "文件上传异常");
+        } finally {
+            // 删除临时文件
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    /**
+     * 修改用户密码
+     */
+
+    @PostMapping("/updatePassword")
+    public BaseResponse<Boolean> updatePassword(
+            @RequestBody UserUpdatePasswordRequest passwordRequest,
+            HttpServletRequest request
+    ) {
+        // 1. 获取当前登录用户
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"用户未登录");
+        }
+
+        String oldPassword = passwordRequest.getOldPassword();
+        String newPassword = passwordRequest.getNewPassword();
+
+        // 2. 校验参数
+        if (StringUtils.isAnyBlank(oldPassword, newPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码不能为空");
+        }
+        if (newPassword.length() < 6) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度不能少于6位");
+        }
+
+        // 3. 校验原密码是否正确
+        String encryptOldPassword = userService.getEncryPassword(oldPassword);
+        if (!encryptOldPassword.equals(loginUser.getUserPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "原密码错误");
+        }
+
+        // 4. 加密新密码
+        String encryptNewPassword = userService.getEncryPassword(newPassword);
+
+        // 5. 更新数据库
+        User updateUser = new User();
+        updateUser.setId(loginUser.getId());
+        updateUser.setUserPassword(encryptNewPassword);
+        boolean result = userService.updateById(updateUser);
+
+        return ResultUtils.success(result);
+    }
+
 
 
 }

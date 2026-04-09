@@ -257,6 +257,10 @@ declare namespace API {
     deployKey: string
   }
 
+  type uploadFileParams = {
+    key: string
+  }
+
   type User = {
     id?: number
     userAccount?: string
@@ -300,6 +304,11 @@ declare namespace API {
     userAccount?: string
     userPassword?: string
     checkPassword?: string
+  }
+
+  type UserUpdatePasswordRequest = {
+    oldPassword?: string
+    newPassword?: string
   }
 
   type UserUpdateRequest = {

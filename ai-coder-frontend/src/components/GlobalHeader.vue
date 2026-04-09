@@ -34,6 +34,11 @@
                     <LogoutOutlined />
                     退出登录
                   </a-menu-item>
+
+                  <a-menu-item @click="changeUserInfo">
+                    <EditOutlined />
+                    修改信息
+                  </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
@@ -54,6 +59,7 @@ import { type MenuProps, message } from 'ant-design-vue'
 import { useLoginUserStore } from '@/stores/loginUser.ts'
 import { userLogout } from '@/api/userController.ts'
 import { LogoutOutlined, HomeOutlined } from '@ant-design/icons-vue'
+import { EditOutlined } from '@ant-design/icons-vue'
 
 const loginUserStore = useLoginUserStore()
 const router = useRouter()
@@ -128,6 +134,11 @@ const doLogout = async () => {
   } else {
     message.error('退出登录失败，' + res.data.message)
   }
+}
+
+//修改个人信息
+const changeUserInfo = async () => {
+  await router.push('/user/userInfo')
 }
 </script>
 
