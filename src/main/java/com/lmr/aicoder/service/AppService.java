@@ -1,5 +1,6 @@
 package com.lmr.aicoder.service;
 
+import com.lmr.aicoder.model.dto.app.AppAddRequest;
 import com.lmr.aicoder.model.dto.app.AppDeployRequest;
 import com.lmr.aicoder.model.dto.app.AppQueryRequest;
 import com.lmr.aicoder.model.entity.User;
@@ -17,6 +18,14 @@ import java.util.List;
  * @author 程序员李梦冉
  */
 public interface AppService extends IService<App> {
+    /**
+     * 创建应用
+     *
+     */
+    Long createApp(AppAddRequest appAddRequest, User loginUser);
+
+
+
     /**
      * 用户查询应用详情
      *
