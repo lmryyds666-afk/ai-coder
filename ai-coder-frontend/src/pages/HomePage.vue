@@ -189,7 +189,7 @@ onMounted(() => {
           type="default"
           @click="
             setPrompt(
-              '创建一个现代化的资讯门户网站，包含文章列表、详情页、分类标签、搜索功能、评论系统和作者介绍页面。采用简洁的设计风格，支持响应式布局，文章支持图文排版，首页展示最新资讯与热门推荐。'
+              '创建一个现代化的资讯门户网站，采用简洁的设计风格，支持响应式布局，文章支持图文排版，首页展示最新资讯与热门推荐。'
             )
           "
           >新闻门户网站</a-button
@@ -297,9 +297,9 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(rgba(190, 121, 81, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(79, 48, 150, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
   pointer-events: none;
