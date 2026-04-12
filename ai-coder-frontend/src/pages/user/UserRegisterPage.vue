@@ -1,7 +1,7 @@
 <template>
   <div id="userRegisterPage">
     <h2 class="title">灵码云- 用户注册</h2>
-    <div class="desc">一句话，呈所想，与AI对话轻松创建应用和网站</div>
+    <div class="desc">灵码云，码所想，一句话轻松创建应用和网站</div>
     <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
       <a-form-item name="userAccount" :rules="[{ required: true, message: '请输入账号' }]">
         <a-input v-model:value="formState.userAccount" placeholder="请输入账号" />

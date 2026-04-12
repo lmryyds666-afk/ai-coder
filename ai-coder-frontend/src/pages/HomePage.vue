@@ -161,8 +161,8 @@ onMounted(() => {
     <div class="container">
       <!-- 网站标题和描述 -->
       <div class="hero-section">
-        <h1 class="hero-title">AI 应用生成平台</h1>
-        <p class="hero-description">一句话轻松创建网站应用</p>
+        <h1 class="hero-title">灵码云，码所想</h1>
+        <p class="hero-description">一句话轻松创建应用和网站</p>
       </div>
 
       <!-- 用户提示词输入框 -->
@@ -189,16 +189,16 @@ onMounted(() => {
           type="default"
           @click="
             setPrompt(
-              '创建一个现代化的个人博客网站，包含文章列表、详情页、分类标签、搜索功能、评论系统和个人简介页面。采用简洁的设计风格，支持响应式布局，文章支持Markdown格式，首页展示最新文章和热门推荐。',
+              '创建一个现代化的资讯门户网站，包含文章列表、详情页、分类标签、搜索功能、评论系统和作者介绍页面。采用简洁的设计风格，支持响应式布局，文章支持图文排版，首页展示最新资讯与热门推荐。'
             )
           "
-          >个人博客网站</a-button
+          >新闻门户网站</a-button
         >
         <a-button
           type="default"
           @click="
             setPrompt(
-              '设计一个专业的企业官网，包含公司介绍、产品服务展示、新闻资讯、联系我们等页面。采用商务风格的设计，包含轮播图、产品展示卡片、团队介绍、客户案例展示，支持多语言切换和在线客服功能。',
+              '创建一个现代化的企业官网，包含产品介绍、服务详情、新闻动态、搜索功能、联系表单和关于我们页面。采用简洁的设计风格，支持响应式布局，内容支持图文排版，首页展示核心业务与最新动态。'
             )
           "
           >企业官网</a-button
@@ -207,7 +207,7 @@ onMounted(() => {
           type="default"
           @click="
             setPrompt(
-              '构建一个功能完整的在线商城，包含商品展示、购物车、用户注册登录、订单管理、支付结算等功能。设计现代化的商品卡片布局，支持商品搜索筛选、用户评价、优惠券系统和会员积分功能。',
+              '创建一个现代化的在线商城，包含商品列表、详情页、分类筛选、搜索功能、购物车和用户中心页面。采用简洁的设计风格，支持响应式布局，商品支持多规格展示，首页展示最新商品与热门推荐。'
             )
           "
           >在线商城</a-button
@@ -216,10 +216,10 @@ onMounted(() => {
           type="default"
           @click="
             setPrompt(
-              '制作一个精美的作品展示网站，适合设计师、摄影师、艺术家等创作者。包含作品画廊、项目详情页、个人简历、联系方式等模块。采用瀑布流或网格布局展示作品，支持图片放大预览和作品分类筛选。',
+              '创建一个现代化的在线笔记系统，包含笔记列表、详情页、分类标签、搜索功能、协作系统和个人中心页面。采用简洁的设计风格，支持响应式布局，笔记支持 Markdown 格式，首页展示最新笔记与常用模板。'
             )
           "
-          >作品展示网站</a-button
+          >云笔记系统</a-button
         >
       </div>
 
@@ -281,8 +281,7 @@ onMounted(() => {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 8%, #e2e8f0 20%, #cbd5e1 100%),
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 8%, #e2e8f0 20%, #cbd5e1 100%),
     radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
@@ -298,16 +297,11 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image:
-    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
     linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
-  background-size:
-    100px 100px,
-    100px 100px,
-    20px 20px,
-    20px 20px;
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
   pointer-events: none;
   animation: gridFloat 20s ease-in-out infinite;
 }
@@ -320,8 +314,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    radial-gradient(
+  background: radial-gradient(
       600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
       rgba(59, 130, 246, 0.08) 0%,
       rgba(139, 92, 246, 0.06) 40%,
@@ -381,8 +374,11 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    radial-gradient(ellipse 800px 400px at center, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
+  background: radial-gradient(
+      ellipse 800px 400px at center,
+      rgba(59, 130, 246, 0.12) 0%,
+      transparent 70%
+    ),
     linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.05) 50%, transparent 70%),
     linear-gradient(-45deg, transparent 30%, rgba(16, 185, 129, 0.04) 50%, transparent 70%);
   animation: heroGlow 10s ease-in-out infinite alternate;

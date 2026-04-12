@@ -3,7 +3,7 @@
   <div class="UserLoginPage">
     <h2 class="title">灵码云-用户登录</h2>
     <div class="desc">
-      一句话，呈所想，与AI对话轻松创建应用和网站
+         灵码云，码所想，一句话轻松创建应用和网站
     </div>
     <a-form
       :model="formState"
@@ -68,6 +68,8 @@ const handleSubmit =async (values: any) => {
       path: '/',
       replace: true
     })
+  } else {
+    message.error(res.data.message || '登录失败')
   }
 };
 
