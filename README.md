@@ -1,7 +1,12 @@
 # AI Coder - 智能代码生成平台
 
 基于 Spring Boot + Vue 3 的全栈 AI 代码生成项目，接入 DeepSeek API，支持自然语言描述自动生成前端项目代码。
-![Uploading image.png…]()
+
+
+<img width="1875" height="917" alt="image" src="https://github.com/user-attachments/assets/5d6577e0-eb8d-427d-93b6-dd389244a2de" />
+<img width="1905" height="888" alt="image" src="https://github.com/user-attachments/assets/89f43490-5e0c-4e27-9379-e650529565f3" />
+<img width="1920" height="927" alt="image" src="https://github.com/user-attachments/assets/df1c054f-48ff-435c-9087-3239ddd26216" />
+
 
 
 ## 技术栈
