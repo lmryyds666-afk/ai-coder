@@ -30,9 +30,11 @@ import com.lmr.aicoder.model.entity.App;
 import com.lmr.aicoder.mapper.AppMapper;
 import com.lmr.aicoder.service.AppService;
 import jakarta.annotation.Resource;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.filter.OrderedFormContentFilter;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -69,6 +71,14 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
     private ScreenshotService screenshotService;
     @Resource
     private AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService;
+
+    @Value("${code.deploy-host:http://localhost}")
+    private String deployHost;
+
+
+
+
+
 
 
     public AppServiceImpl(UserService userService, AiCodeGeneratorFacade aiCodeGeneratorFacade) {
@@ -222,6 +232,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
      */
     @Override
     public String deployApp(Long appId, User loginUser) {
+
         //参数校验
         ThrowUtils.throwIf(appId == null || appId<= 0, ErrorCode.PARAMS_ERROR,"应用不能为空");
         //查询应用信息
@@ -272,7 +283,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         boolean updateResult = this.updateById(updateApp);
         ThrowUtils.throwIf(!updateResult,ErrorCode.OPERATION_ERROR,"数据库应用部署失败");
         // 10. 构建应用访问 URL
-        String appDeployUrl = String.format("%s/%s/", AppConstant.CODE_DEPLOY_HOST, deployKey);
+        String appDeployUrl = String.format("%s/%s/", deployHost, deployKey);
         // 11. 异步生成截图并更新应用封面
         generateAppScreenshotAsync(appId, appDeployUrl);
         return appDeployUrl;
@@ -288,7 +299,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
     public void generateAppScreenshotAsync(Long appId, String appUrl) {
         // 使用虚拟线程异步执行
-        Thread.startVirtualThread(() -> {
+        new Thread(() -> {
             // 调用截图服务生成截图并上传
             String screenshotUrl = screenshotService.generateAndUploadScreenshot(appUrl);
             // 更新应用封面字段
@@ -297,7 +308,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
             updateApp.setCover(screenshotUrl);
             boolean updated = this.updateById(updateApp);
             ThrowUtils.throwIf(!updated, ErrorCode.OPERATION_ERROR, "更新应用封面字段失败");
-        });
+        }).start();
     }
 
 

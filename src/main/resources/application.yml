@@ -3,6 +3,8 @@ spring:
     name: lmr-ai-code-mother-backend
 
 
+
+
   profiles:
     active: local
 
@@ -11,13 +13,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: lmryyds666
       ttl: 3600
-
-
-
-
-
 
 
   # mysql
@@ -26,6 +22,7 @@ spring:
     url: jdbc:mysql://localhost:3306/ai_code_mother
     username: root
     password: lmryyds666
+
 
 server:
   port: 8123
@@ -43,5 +40,9 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+
+#部署路径
+code:
+  deploy-host: http://39.106.120.180/dist
 
 

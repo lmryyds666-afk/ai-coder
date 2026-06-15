@@ -6,6 +6,7 @@ target/
 
 ### CUSTOM ###
 application-local.yml
+application-prod.yml
 tmp
 
 
@@ -36,3 +37,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+*.log
+
+.workbuddy/
